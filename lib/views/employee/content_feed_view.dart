@@ -140,6 +140,7 @@ class ContentFeedView extends StatelessWidget {
   Widget _buildContentCard(BuildContext context, ContentModel content) {
     final currentUserId = authController.currentUser.value?.id;
     final isOwner = content.authorId == currentUserId;
+    final canDelete = isOwner || authController.isAdmin;
     final dateFormat = DateFormat('MMM dd, yyyy - hh:mm a');
 
     return Card(
@@ -196,17 +197,18 @@ class ContentFeedView extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (isOwner)
+                if (canDelete)
                   PopupMenuButton<String>(
                     onSelected: (val) {
                       if (val == 'edit') {
                         _showEditContentSheet(context, content);
                       } else if (val == 'delete') {
-                        employeeController.deleteContent(content.id);
+                        _showDeleteContentConfirmation(context, content);
                       }
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                      if (isOwner)
+                        const PopupMenuItem(value: 'edit', child: Text('Edit')),
                       const PopupMenuItem(
                         value: 'delete',
                         child: Text('Delete'),
@@ -536,6 +538,25 @@ class ContentFeedView extends StatelessWidget {
         ),
       ),
       isScrollControlled: true,
+    );
+  }
+
+  void _showDeleteContentConfirmation(
+    BuildContext context,
+    ContentModel content,
+  ) {
+    Get.defaultDialog(
+      title: 'Delete Work Record',
+      middleText: 'Are you sure you want to delete this work record?',
+      textConfirm: 'Delete',
+      textCancel: 'Cancel',
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () async {
+        Get.back();
+        await employeeController.deleteContent(content.id);
+        Get.snackbar('Deleted', 'Work record deleted successfully');
+      },
     );
   }
 

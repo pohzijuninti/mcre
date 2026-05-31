@@ -43,12 +43,7 @@ class EmployeeManagementView extends StatelessWidget {
                   const SizedBox(width: 8),
                   Obx(
                     () => PopupMenuButton<EmployeeSortType>(
-                      icon: Icon(
-                        Icons.sort,
-                        color: adminController.isAscending.value
-                            ? Colors.blue
-                            : Colors.red,
-                      ),
+                      icon: const Icon(Icons.sort, color: Colors.black),
                       onSelected: (type) => adminController.setSortType(type),
                       itemBuilder: (context) => [
                         const PopupMenuItem(
@@ -169,7 +164,11 @@ class EmployeeManagementView extends StatelessWidget {
 
     final AdminController adminController = Get.find<AdminController>();
 
-    var selectedUserRole = (employee?.role ?? UserRole.employee).obs;
+    const selectableUserRoles = [UserRole.employer, UserRole.employee];
+    final initialUserRole = selectableUserRoles.contains(employee?.role)
+        ? employee!.role
+        : UserRole.employee;
+    var selectedUserRole = initialUserRole.obs;
     var selectedAreas = (employee?.areas ?? []).obs;
 
     Get.defaultDialog(
@@ -199,22 +198,16 @@ class EmployeeManagementView extends StatelessWidget {
             const SizedBox(height: 16),
             Obx(
               () => DropdownButtonFormField<UserRole>(
-                value: selectedUserRole.value,
+                initialValue: selectedUserRole.value,
                 decoration: const InputDecoration(labelText: 'Job Role'),
-                items:
-                    [
-                          UserRole.employer,
-                          UserRole.manager,
-                          UserRole.supervisor,
-                          UserRole.employee,
-                        ]
-                        .map(
-                          (r) => DropdownMenuItem(
-                            value: r,
-                            child: Text(r.name.capitalizeFirst!),
-                          ),
-                        )
-                        .toList(),
+                items: selectableUserRoles
+                    .map(
+                      (r) => DropdownMenuItem(
+                        value: r,
+                        child: Text(r.name.capitalizeFirst!),
+                      ),
+                    )
+                    .toList(),
                 onChanged: (val) => selectedUserRole.value = val!,
               ),
             ),

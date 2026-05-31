@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../../controllers/auth_controller.dart';
-import '../../controllers/employee_controller.dart';
 import 'content_feed_view.dart';
 import 'statistics_view.dart';
 import '../chat/chat_list_view.dart';
@@ -20,6 +19,12 @@ class EmployeeDashboard extends StatelessWidget {
       child: Scaffold(
         drawer: _buildDrawer(context),
         appBar: AppBar(
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu, color: Colors.white),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ),
           title: const Text('Staff Portal'),
           backgroundColor: Colors.teal,
           foregroundColor: Colors.white,
@@ -46,17 +51,41 @@ class EmployeeDashboard extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          UserAccountsDrawerHeader(
+          DrawerHeader(
             decoration: const BoxDecoration(color: Colors.teal),
-            accountName: Text(user?.name ?? 'Unknown'),
-            accountEmail: _buildAreasText(user?.areas),
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: user?.picture != null
-                  ? NetworkImage(user!.picture!)
-                  : null,
-              child: user?.picture == null
-                  ? const Icon(Icons.person, size: 40)
-                  : null,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 32,
+                  backgroundImage: user?.picture != null
+                      ? NetworkImage(user!.picture!)
+                      : null,
+                  child: user?.picture == null
+                      ? const Icon(Icons.person, size: 36)
+                      : null,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user?.name ?? 'Unknown',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildAreasText(user?.areas),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           ListTile(
@@ -90,13 +119,28 @@ class EmployeeDashboard extends StatelessWidget {
 
   Widget _buildAreasText(List<String>? areas) {
     if (areas == null || areas.isEmpty) {
-      return const Text('No Area Assigned');
+      return const Text(
+        'No Area Assigned',
+        style: TextStyle(color: Colors.white70),
+      );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: areas.map((area) => Text(area)).toList(),
+    return Flexible(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: areas
+              .map(
+                (area) => Text(
+                  area,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white70),
+                ),
+              )
+              .toList(),
+        ),
+      ),
     );
   }
 
