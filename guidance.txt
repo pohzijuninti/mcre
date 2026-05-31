@@ -1,0 +1,69 @@
+# Project Guidance: Staff Record App
+
+Welcome to the Staff Record project! This app is designed to manage employee records using a modern, scalable architecture. As a newcomer, it's important to understand the "why" and "how" behind our technical choices.
+
+## 1. Core Technologies
+- **Flutter**: Our UI framework. It allows us to build a beautiful, high-performance app from a single codebase.
+- **Firebase**: Our backend-as-a-service. We use **Firebase Auth** for secure logins and **Cloud Firestore** as our NoSQL database.
+- **GetX**: Our "Swiss Army Knife" for Flutter. We use it for three main things:
+    - **State Management**: Keeping the UI in sync with data.
+    - **Dependency Injection**: Managing classes like controllers and services.
+    - **Navigation**: Switching between screens without needing `BuildContext`.
+
+---
+
+## 2. Architecture: The MVC + Service Pattern
+We follow the **MVC (Model-View-Controller)** pattern, enhanced with a **Service** layer. This keeps our code organized and easy to maintain.
+
+### 📂 Models (`lib/models/`)
+**What they are**: Simple classes that define the structure of our data.
+- **Example**: `UserModel.dart` defines what an employee looks like (name, email, role).
+- **Why?**: It gives us "type safety." Instead of guessing what's in a database map, we use `user.email` or `user.role`.
+
+### 📂 Views (`lib/views/`)
+**What they are**: The UI components. They should only care about *how things look*.
+- **Example**: `LoginScreen.dart` contains the text fields and buttons for logging in.
+- **Why?**: Keeping UI separate from logic makes it easier to redesign the app without breaking the features.
+
+### 📂 Controllers (`lib/controllers/`)
+**What they are**: The "brains" of the app. They handle user actions and update the state.
+- **Example**: `AuthController.dart` handles the logic for logging in, checking roles, and redirecting users.
+- **Why?**: If we want to change how login works (e.g., add social login), we only change the Controller, not the View.
+
+### 📂 Services (`lib/services/`)
+**What they are**: Classes that talk to external systems (like Firebase).
+- **Example**: `FirebaseService.dart` contains the raw Firestore queries.
+- **Why?**: Controllers shouldn't care *how* data is saved; they just tell the Service to "save this user." This makes the code reusable and testable.
+
+---
+
+## 3. Key Concepts to Know
+
+### GetX Dependency Injection (`lib/bindings/`)
+We use **InitialBinding** to "inject" our Controllers and Services into memory when the app starts.
+- **How it works**: `Get.put(FirebaseService())` makes the service available everywhere.
+- **Retrieving**: Use `Get.find<FirebaseService>()` in your controllers.
+
+### Reactive State Management (`.obs` and `Obx`)
+In our Controllers, you'll see variables like `isLoading = false.obs;`.
+- **The Magic**: When `isLoading` changes, any UI wrapped in an `Obx(() => ...)` widget will **automatically** rebuild. No more manual `setState()`!
+
+### Named Routes (`lib/routes/`)
+Instead of `Navigator.push(...)`, we use `Get.toNamed('/login')`.
+- **Why?**: It makes navigation predictable and centralized in one file (`app_pages.dart`).
+
+---
+
+## 4. Why did we build it like this?
+1. **Scalability**: As the app grows, you won't get lost. You'll always know exactly where to find UI (Views), Logic (Controllers), or Data (Models).
+2. **Readability**: A newbie can look at a Controller and understand the business flow without being distracted by CSS-like styling code.
+3. **Collaboration**: One developer can work on the Firestore logic in the Service, while another builds the Dashboard UI at the same time.
+
+---
+
+## 5. Quick Start for You
+1. Look at `lib/main.dart` to see how the app starts.
+2. Check `lib/routes/app_pages.dart` to see the available screens.
+3. Explore `lib/controllers/auth_controller.dart` to understand how we handle user sessions.
+
+Happy Coding! 🚀

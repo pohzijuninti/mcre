@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "677223091443",
+    "project_id": "staffrecord-a1423",
+    "storage_bucket": "staffrecord-a1423.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677223091443:android:961f88ec5465a5a2fdfb86",
+        "android_client_info": {
+          "package_name": "com.inti.staffrecord"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRZl2F6prDYTWZpkwj8udzUlZnHWHyg4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
